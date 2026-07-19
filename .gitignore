@@ -1,0 +1,5 @@
+watcher.pid
+watcher.out.log
+watcher.err.log
+__pycache__/
+sweep2.log

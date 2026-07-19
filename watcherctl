@@ -1,0 +1,35 @@
+#!/bin/bash
+# Control the Odyssey seat watcher launchd agent.
+# Usage: ./watcherctl {start|stop|status|logs|alerts|report}
+set -euo pipefail
+DIR="$(cd "$(dirname "$0")" && pwd)"
+LABEL="com.danielrousseau.odyssey-watcher"
+PLIST_SRC="$DIR/$LABEL.plist"
+PLIST_DST="$HOME/Library/LaunchAgents/$LABEL.plist"
+
+case "${1:-status}" in
+  start)
+    mkdir -p "$HOME/Library/LaunchAgents"
+    cp "$PLIST_SRC" "$PLIST_DST"
+    launchctl bootstrap "gui/$(id -u)" "$PLIST_DST" 2>/dev/null || \
+      launchctl kickstart -k "gui/$(id -u)/$LABEL"
+    echo "watcher started (launchd agent $LABEL)"
+    ;;
+  stop)
+    launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
+    rm -f "$PLIST_DST" "$DIR/watcher.pid"
+    echo "watcher stopped and agent removed"
+    ;;
+  status)
+    if launchctl print "gui/$(id -u)/$LABEL" &>/dev/null; then
+      echo "agent loaded:"
+      launchctl print "gui/$(id -u)/$LABEL" | grep -E 'state|pid' | head -3
+    else
+      echo "agent not loaded"
+    fi
+    ;;
+  logs)   tail -40 "$DIR/watcher.out.log" ;;
+  alerts) tail -40 "$DIR/alerts.log" 2>/dev/null || echo "no alerts yet" ;;
+  report) python3 "$DIR/watch.py" --report ;;
+  *) echo "usage: $0 {start|stop|status|logs|alerts|report}"; exit 1 ;;
+esac
