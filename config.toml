@@ -1,0 +1,38 @@
+# What to watch and what counts as a seat worth hearing about.
+
+[target]
+# Theater slug, from the theater's page URL:
+# cinemark.com/theatres/<this-part>
+theater = "tx-dallas/cinemark-dallas-xd-and-imax"
+
+# Movie id: on the theater page, right-click any showtime of your movie and
+# copy the link — it looks like /TicketSeatMap/?TheaterId=...&CinemarkMovieId=104867&...
+movie_id = 104867
+
+# Used in alert messages only.
+movie_name = "The Odyssey IMAX 70MM"
+
+# The theater's local timezone (IANA name). Keeps date handling correct when
+# the watcher runs in another timezone (GitHub Actions runners are UTC).
+timezone = "America/Chicago"
+
+[filters]
+# Rows you refuse to sit in (usually the neck-craning front rows).
+excluded_rows = ["A", "B", "C", "D"]
+
+# Ignore showings that start outside this window (theater-local, 24h HH:MM).
+earliest_showtime = "09:00"
+latest_showtime = "23:59"
+
+# Alert only when this many physically adjacent seats open up together.
+party_size = 1
+
+[pacing]
+# Cinemark rate-limits around 60-70 requests per 10 minutes per IP.
+request_gap_seconds = 8
+
+# Probe for newly added dates every Nth sweep (seat checks happen every sweep).
+date_scan_every = 3
+
+# Loop mode only; on GitHub Actions the cadence comes from the workflow cron.
+poll_minutes = 5

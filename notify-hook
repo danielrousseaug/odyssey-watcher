@@ -1,19 +1,19 @@
 #!/bin/bash
-# Alert channel: file a GitHub issue (GitHub then emails the @mentioned owner).
-# Called by watch.py as: notify-hook TITLE MESSAGE
-# Only acts on GitHub Actions runners; local runs rely on the macOS banner.
+# Alert channel for GitHub Actions: file an issue that @mentions the repo owner,
+# which makes GitHub send them an email. Called by watch.py as:
+#   notify-hook TITLE MESSAGE
+# Running locally instead? Replace this file with anything executable — point it
+# at ntfy.sh, a Discord webhook, or `osascript` for macOS banners.
 set -euo pipefail
 [ "${GITHUB_ACTIONS:-}" = "true" ] || exit 0
 
-TITLE="$1"
-MESSAGE="$2"
-BODY="@danielrousseaug ${MESSAGE}
-
-Book: https://www.cinemark.com/theatres/tx-dallas/cinemark-dallas-xd-and-imax
-
-_automated alert from the odyssey seat watcher_"
+THEATER=$(sed -n 's/^theater *= *"\(.*\)"/\1/p' "$(dirname "$0")/config.toml")
 
 gh issue create \
   --repo "${GITHUB_REPOSITORY}" \
-  --title "🎬 ${TITLE}" \
-  --body "${BODY}"
+  --title "$1" \
+  --body "@${GITHUB_REPOSITORY_OWNER} $2
+
+Book: https://www.cinemark.com/theatres/${THEATER}
+
+Automated alert from cinemark-seat-alert."
