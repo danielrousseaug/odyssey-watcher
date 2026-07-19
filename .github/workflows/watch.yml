@@ -1,7 +1,8 @@
 name: watch
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    # Offset from :00/:30 on purpose: GitHub sheds scheduled runs at peak minutes.
+    - cron: "13,43 * * * *"
   workflow_dispatch:
     inputs:
       test_alert:
