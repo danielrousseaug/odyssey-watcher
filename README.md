@@ -1,4 +1,4 @@
-# cinemark-ticket-sniper
+# Cinemark ticket sniper
 
 Email alerts when seats open up at a sold-out Cinemark showing.
 
@@ -26,7 +26,7 @@ happens to be looking. This looks every 30 minutes so you don't have to.
 Emails arrive via GitHub notifications, which are on by default. Check that
 github.com/settings/notifications points at an inbox you read.
 
-## Configuration
+## Config
 
 Everything lives in `config.toml`:
 
